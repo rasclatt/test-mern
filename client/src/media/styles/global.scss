@@ -1,0 +1,24 @@
+// global.scss
+
+// Define breakpoints
+$breakpoint-desktop: 1024px;
+
+// Grid styles
+.col-count-3 {
+    display: grid;
+    grid-template-columns: 1em 1fr 1em;
+
+    @media (min-width: $breakpoint-desktop) {
+        grid-template-columns: 1fr 1200px 1fr;
+    }
+}
+.col-count-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+.gapped {
+    gap: 1em;
+}
+.start2 {
+    grid-column-start: 2;
+}
