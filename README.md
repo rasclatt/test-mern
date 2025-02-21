@@ -17,3 +17,10 @@ The project runs a React instance with ViteJS as the bundler. I have found vitej
 The project runs a mongo db and Express server on their respective ports.
 
 This project is relatively boring in terms of overall features but demonstrates REST and Frontend compidency.
+
+# Challenge Requirements
+- Create a login using a React frontend.
+- Create a database connection using any database, MongoDb, SQLite, MySQL.
+- Create an Express backend to facilitate login and fetch sessioned user information.
+- Use JWT for the login mechanism.
+- Styles are not required, functionality is key.
