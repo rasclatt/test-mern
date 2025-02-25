@@ -4,6 +4,7 @@ import { encrypt } from '../helpers/crypt';
 import { obfuscateIds } from '../middleware/obfuscate';
 import { body, validationResult } from 'express-validator';
 import { hashPassword } from './users/helpers';
+import { getUsersFromExternal } from '../services/users.service';
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -22,6 +23,13 @@ router.post('/auth', async (req: {body: IUser}, res: any) => {
     email = email?.trim();
     password = password?.trim();
     try {
+        /**
+         * Just to demonstrate hitting an external API, has no relevance to the actual code
+        */
+        const external = await getUsersFromExternal(1, 20);
+        const d = await external.json();
+        console.log(d, 'external');
+
         if(!email || !password) {
             return res.status(400).json({ message: 'Please enter all fields' });
         }
