@@ -1,10 +1,9 @@
 import { Route, Routes, BrowserRouter } from 'react-router-dom';
-import HomePage from './pages/homepage';
-import SignInComponent from './components/permission/sign-in';
 import { AccountProvider } from './providers/account.provider';
+import publicRoutes from './routes/public';
+import privateRoutes from './routes/private';
 
 const App = () => {
-
     return (
         <AccountProvider>
             <BrowserRouter
@@ -14,8 +13,12 @@ const App = () => {
                 }}
             >
                 <Routes>
-                    <Route path="/" element={ <HomePage /> } />
-                    <Route path="/sign-in" element={ <SignInComponent redirect='/'></SignInComponent> } />
+                    {[
+                        ...publicRoutes,
+                        ...privateRoutes
+                    ].map((route, index) => (
+                        <Route key={ index } path={ route.path } element={ route.component } />
+                    ))}
                 </Routes>
             </BrowserRouter>
         </AccountProvider>

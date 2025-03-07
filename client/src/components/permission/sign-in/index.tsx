@@ -4,6 +4,8 @@ import { UserAuthPostService, UserCreatePostService } from './service';
 import { IComponentChildren } from '../../../interfaces/children.interface';
 import { toast } from 'react-toastify';
 import useToken from '../../../hooks/token.hook';
+import UsersFormPasswordFieldComponent from '../../users/form/password.field';
+import UiButtonSubmit from '../../ui/button.submit';
 
 interface ISignUpForm {
     email: string;
@@ -22,6 +24,7 @@ const SignInComponent = ({children, redirect}: ISignInComponent) => {
     const [ email, setEmail ] = useState('');
     const [ password, setPassword ] = useState('');
     const [ formData, setFormData ] = useState(init);
+    const [ passwordValid, setPasswordValid ] = useState<boolean>(true);
 
     const [ toggle, setToggle ] = useState<boolean>(false);
     const { token, setToken } = useToken();
@@ -75,18 +78,16 @@ const SignInComponent = ({children, redirect}: ISignInComponent) => {
         <>
         {!token && !toggle && (
             <Container component="main" maxWidth="xs">
-            <Box
-                sx={{
-                    marginTop: 8,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                }}
-            >
-                <Typography component="h1" variant="h5">
-                    Sign in
-                </Typography>
-                <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+                <Box
+                    sx={{
+                        marginTop: 8,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}
+                >
+                <Typography component="h1" variant="h5">Sign in</Typography>
+                <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }} className={`p-4 ${!loading? '' : 'disable-block'}`}>
                     <TextField
                         variant="outlined"
                         margin="normal"
@@ -100,29 +101,17 @@ const SignInComponent = ({children, redirect}: ISignInComponent) => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Password"
-                        type="password"
-                        id="password"
-                        autoComplete="current-password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                    <UsersFormPasswordFieldComponent
+                        setPasswordValid={ setPasswordValid }
+                        setValue={ setPassword }
+                        value={ password }
+                        softRequired
+                        generator={ false}
                     />
-                    <Button
-                        disabled={ loading }
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        sx={{ mt: 3, mb: 2 }}
-                    >
-                        Sign In
-                    </Button>
+                    <UiButtonSubmit
+                        label="Sign In"
+                        disabled={ loading || !passwordValid }
+                    />
                 </Box>
             </Box>
             </Container>
@@ -147,32 +136,6 @@ const SignInComponent = ({children, redirect}: ISignInComponent) => {
                         margin="normal"
                         required
                         fullWidth
-                        id="email"
-                        label="Email Address"
-                        name="email"
-                        autoComplete="email"
-                        autoFocus
-                        value={ formData.email || '' }
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    />
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Password"
-                        type="password"
-                        id="password"
-                        autoComplete="current-password"
-                        value={formData.password || ''}
-                        onChange={(e) => setFormData({...formData, password: e.target.value})}
-                    />
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
                         name="first_name"
                         label="First Name"
                         id="first_name"
@@ -190,25 +153,41 @@ const SignInComponent = ({children, redirect}: ISignInComponent) => {
                         value={ formData.last_name || '' }
                         onChange={(e) => setFormData({...formData, last_name: e.target.value})}
                     />
-                    <Button
-                        disabled={ loading }
-                        type="submit"
+                    <TextField
+                        variant="outlined"
+                        margin="normal"
+                        required
                         fullWidth
-                        variant="contained"
-                        color="primary"
-                        sx={{ mt: 3, mb: 2 }}
-                    >
-                        Sign Up
-                    </Button>
+                        id="email"
+                        label="Email Address"
+                        name="email"
+                        autoComplete="email"
+                        autoFocus
+                        value={ formData.email || '' }
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    />
+
+                    <UsersFormPasswordFieldComponent
+                        setPasswordValid={ setPasswordValid }
+                        user={ formData }
+                        setUser={ setFormData }
+                        passRequired={ true }
+                    />
+                    <UiButtonSubmit
+                        label="Sign Up"
+                        disabled={ loading }
+                    />
                 </Box>
             </Box>
             </Container>
         )}
 
         { !token && (
-            <Button onClick={() => setToggle(!toggle)} fullWidth variant="text" color="primary" sx={{ mt: 3, mb: 2 }}>
-                {toggle? 'Sign In' : 'Sign Up'}
-            </Button>
+            <div className="flex justify-center items-center mt-4">
+                <button type='button' onClick={() => setToggle(!toggle)} className='no-appearance'>
+                {toggle ? 'Have an account already' : 'Need an account'}? <span className='underline'>{toggle ? 'Sign In.' : 'Sign Up.'}</span>
+                </button>
+            </div>
         )}
 
         { token && !loading && (children || null)}

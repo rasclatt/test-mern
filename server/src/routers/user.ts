@@ -57,7 +57,7 @@ router.post('/create', [
   body('email').isEmail().withMessage('Please enter a valid email'),
   body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
   body('first_name').notEmpty().withMessage('First name is required'),
-  body('last_name').notEmpty().withMessage('Last name is required')
+  body('last_name').notEmpty().withMessage('Last name is required'),
 ], async (req: { body: IUser }, res: any) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -72,8 +72,12 @@ router.post('/create', [
       if(exists) {
         return res.status(400).json({ message: 'User already exists' });
       }
+
+      const userCount = await Users.getModel().countDocuments();
+
+      const usergroup = userCount === 0? '1' : req.body.usergroup || '3';
       // Create a new user
-      const newUser = await Users.create({...req.body, username: req.body.email});
+      const newUser = await Users.create({...req.body, username: req.body.email, usergroup });
       res.status(201).json(newUser);
     } catch (error: any) {
       res.status(500).json({ message: error?.message || 'Server error' });
@@ -106,7 +110,6 @@ router.patch('/account', async (req: any, res: any) => {
       if(!req.token || !req.account) {
         return res.status(400).json({ message: 'Invalid token' });
       }
-      console.log(req.account, body, 'uyser');
       delete body._id;
       if(body.password) {
         body.password = await hashPassword(body.password);

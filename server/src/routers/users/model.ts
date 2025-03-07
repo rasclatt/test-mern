@@ -24,6 +24,10 @@ const userSchema = new Schema({
       type: String,
       required: true,
     },
+    usergroup: {
+      type: String,
+      required: true,
+    },
   }, { timestamps: true });
   
 const UsersModel: Model<IUser & Document> = mongoose.models[modelName] || mongoose.model<IUser & Document>(modelName, userSchema);

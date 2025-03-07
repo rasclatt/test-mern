@@ -1,8 +1,8 @@
 import React, { useState, ReactNode, useEffect } from 'react';
-import { IUser } from '../../../server/src/routers/users/interface';
 import { UserGetService } from '../components/users/service';
 import { AccountContext } from './account.context';
 import useToken from '../hooks/token.hook';
+import { IUser } from '../components/users/interface';
 
 export interface IAccountContext {
     account: IUser | null;

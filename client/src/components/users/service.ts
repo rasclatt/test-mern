@@ -1,5 +1,5 @@
-import { IUser } from "../../../../server/src/routers/users/interface";
 import { getRequest, patchRequest } from "../../services/base";
+import { IUser } from "./interface";
 
 export const UserGetService = async () => await getRequest<IUser>('/user/account');
 

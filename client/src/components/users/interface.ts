@@ -5,7 +5,7 @@ export interface IUser
     last_name?: string;
     username?: string;
     password?: string;
-    usergroup?: '1' | '2' | '3';
     email?: string;
+    usergroup?: string;
     roles?: string[];
 }
