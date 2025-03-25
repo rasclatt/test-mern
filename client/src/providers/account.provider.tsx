@@ -18,9 +18,9 @@ export const AccountProvider: React.FC<{ children: ReactNode }> = ({ children })
         if(token) {
             if(!ready.loading && !ready.ready) {
                 setReady({loading: true, ready: false});
-                UserGetService().then((data:IUser) => {
-                    if(data?._id)
-                        setAccount(data);
+                UserGetService().then((r) => {
+                    if(r?.data?._id)
+                        setAccount(r?.data);
                     setReady({loading: false, ready: true});
                 }).catch((e: {[k:string]: string | object }) => {
                     console.log(e);

@@ -16,9 +16,10 @@ interface ISignUpForm {
 
 interface ISignInComponent extends IComponentChildren {
     redirect?: string;
+    hardRedirect?: boolean;
 }
 
-const SignInComponent = ({children, redirect}: ISignInComponent) => {
+const SignInComponent = ({children, redirect, hardRedirect}: ISignInComponent) => {
     const init: ISignUpForm = { email: '', password: '', first_name: '', last_name: '' };
     const [ loading, setLoading ] = useState(false);
     const [ email, setEmail ] = useState('');
@@ -70,7 +71,11 @@ const SignInComponent = ({children, redirect}: ISignInComponent) => {
 
     useEffect(() => {
         if(token && redirect) {
-            window.location.href = redirect;
+            if(hardRedirect) {
+                window.location.reload();
+            } else {
+                window.location.href = redirect;
+            }
         }
     }, [token, redirect]);
 

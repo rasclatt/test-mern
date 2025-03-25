@@ -20,7 +20,6 @@ export function obfuscateIds(obj: any, toJson: boolean = true): any {
 }
 
 export const obfuscateResponseMiddleware = (req: Request, res: Response, next: NextFunction): void => {
-    console.log('googoo');
     const originalJson = res.json;
     const originalSend = res.send;
   

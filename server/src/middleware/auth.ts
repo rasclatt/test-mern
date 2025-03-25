@@ -20,6 +20,7 @@ const trimRequestBody = (obj: any): any => {
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
     (req as any).body = trimRequestBody(req.body);
+    let loggedIn = false;
     if (authHeader) {
         let account: IUser | null = null;
         let token = authHeader.split(' ')[1];
@@ -33,6 +34,15 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
                 const r = await Users.getById(id);
                 if (r?._id) {
                     (req as any).account = r;
+                    loggedIn = true;
+                    const ug: string = (r.usergroup || 3).toString();
+                    if(['1', '2'].includes(ug)) {
+                        (req as any).isAdmin = true;
+                        (req as any).isSuperUser = ['1'].includes(ug);
+                    } else {
+                        (req as any).isAdmin = false;
+                        (req as any).isSuperUser = false;
+                    }
                 } else {
                     token = '';
                 }
@@ -43,6 +53,6 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
         (req as any).token = '';
     }
     (req as any).tester = generateEncryptionKey();
-
+    (req as any).loggedIn = loggedIn;
     next();
 };

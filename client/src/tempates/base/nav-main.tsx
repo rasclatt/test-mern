@@ -1,14 +1,18 @@
-import UiSignOutButton from "../../components/ui/button.signout";
-import { useAccount } from "../../hooks/account.hook"
-import { ReactNode, useState } from 'react';
-import LogoImg from '../../media/images/logo.png';
+import { ReactNode, useContext } from 'react';
 import { NavLink } from "react-router-dom";
+import { useAccount } from "../../hooks/account.hook"
+import UiSignOutButton from "../../components/ui/button.signout";
+import LogoImg from '../../media/images/logo.png';
 import useToken from "../../hooks/token.hook";
+import './styles.scss';
+import SignInComponent from '../../components/permission/sign-in';
+import ModalComponentContext from '../../components/modal/context';
 
 interface IMenuNavObject {
     path: string,
     content: string | ReactNode,
     display: boolean,
+    loggedOut?: string,
     children?: IMenuNavObject[]
 }
 
@@ -18,8 +22,10 @@ interface IMainNav
 }
 
 const MainNav = ({ logo } : IMainNav) => {
+    const { setModalContent, setAutoWidth, openModal } = useContext(ModalComponentContext);
     const { account, ready } = useAccount();
     const { token } = useToken();
+
     const pages: IMenuNavObject[] = [
         {
             path: '/',
@@ -27,14 +33,31 @@ const MainNav = ({ logo } : IMainNav) => {
             display: true
         },
         {
-            path: '/account',
+            path: '/forum',
+            content: 'Forums',
+            display: true
+        },
+        {
+            path: '/admin/users',
+            content: 'Tools',
+            display: (ready && parseInt(account?.usergroup || '3') < 3)? true : false,
+            children: [
+                {
+                    path: '/admin/users',
+                    content: 'Edit Users',
+                    display: true
+                }
+            ],
+        },
+        {
+            path: '/account/update',
             content: 'Account',
             display: true,
             children: [
                 {
                     path: '/account/update',
                     content: 'Update',
-                    display: (ready && account?._id)? true : false
+                    display: (ready && account?._id)? true : false,
                 },
                 {
                     path: '#',
@@ -42,8 +65,17 @@ const MainNav = ({ logo } : IMainNav) => {
                     display: (ready && account?._id && token)? true : false
                 },
                 {
-                    path: '/sign-in',
-                    content: 'Sign In',
+                    path: '#',
+                    content: <button className='no-appearance' onClick={ () => {
+                        openModal();
+                        setModalContent((
+                            <SignInComponent
+                                hardRedirect
+                                redirect={ window.location.href }
+                            />
+                        ));
+                        setAutoWidth(true);
+                    } }>Sign In</button>,
                     display: (ready && !account?._id)? true : false
                 }
             ]
@@ -56,9 +88,9 @@ const MainNav = ({ logo } : IMainNav) => {
                 {child.map((page, index) => (
                     page.display && (
                         <li key={index} className="relative group">
-                            <a href={page.path} className="block px-4 py-2">{page.content}</a>
+                            <NavLink to={page.path} className="block px-4 py-2">{page.content}</NavLink>
                             {page.children && (
-                                <ul className="absolute left-0 hidden mt-0 space-y-2 bg-white rounded-md shadow-lg group-hover:block">
+                                <ul className="absolute right-0 hidden mt-0 space-y-2 bg-white rounded-md shadow-lg group-hover:block">
                                     {renderPages(page.children)}
                                 </ul>
                             )}
@@ -70,19 +102,18 @@ const MainNav = ({ logo } : IMainNav) => {
     };
 
     return (
-        <nav className="main-nav w-full">
-            <div className="col-count-3">
-                <div className="start2 flex justify-between items-end">
-                    <div className="logo-container">
-                        <NavLink to="/"><img src={ logo || LogoImg } alt="logo" /></NavLink>
-                    </div>
-                    <div>
-                    {renderPages(pages, true)}
-                    </div>
+    <nav className="main-nav w-full">
+        <div className="col-count-3">
+            <div className="start2 flex justify-between items-end">
+                <div className="logo-container">
+                    <NavLink to="/"><img src={ logo || LogoImg } alt="logo" /></NavLink>
+                </div>
+                <div>
+                {renderPages(pages, true)}
                 </div>
             </div>
-        </nav>
-    );
+        </div>
+    </nav>);
 }
 
 export default MainNav;

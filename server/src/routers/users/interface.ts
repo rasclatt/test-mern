@@ -8,4 +8,5 @@ export interface IUser
     usergroup?: '1' | '2' | '3';
     email?: string;
     roles?: string[];
+    action?: 'create';
 }

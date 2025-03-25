@@ -4,7 +4,7 @@ import { IUser } from "./interface";
 
 const modelName = 'users';
 
-const userSchema = new Schema({
+const schema = new Schema({
     email: {
       type: String,
       required: true,
@@ -30,7 +30,7 @@ const userSchema = new Schema({
     },
   }, { timestamps: true });
   
-const UsersModel: Model<IUser & Document> = mongoose.models[modelName] || mongoose.model<IUser & Document>(modelName, userSchema);
+const UsersModel: Model<IUser & Document> = mongoose.models[modelName] || mongoose.model<IUser & Document>(modelName, schema);
 
 export class Users
 {

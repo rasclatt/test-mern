@@ -1,6 +1,7 @@
 import { environment } from './environment';
 import { authMiddleware } from './middleware/auth';
 import { obfuscateResponseMiddleware } from './middleware/obfuscate';
+import routes from './routers';
 import usersRoute from './routers/user';
 const express = require('express');
 const mongoose = require('mongoose');
@@ -16,7 +17,9 @@ app.use(express.json());
 const db: string = `${process.env.MONGO_URI}/${environment.mongoDbName}` || `${environment.mongoDbHost}:${environment.mongoDbPort}/${environment.mongoDbName}`;
 // MongoDB connection
 mongoose.connect(db);
-app.use('/api/user', usersRoute);
+routes.map((route) => {
+  app.use(route.path, route.router());
+});
 app.use(obfuscateResponseMiddleware);
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
